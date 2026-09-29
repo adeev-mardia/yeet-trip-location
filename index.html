@@ -133,6 +133,7 @@ td.hl{font-weight:700}
 .poll{background:var(--surface);border:2px dashed var(--accent);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .poll .ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .poll .ph .tag{margin:0}
+.poll .hint{font-size:13px;color:var(--muted);margin-top:-6px}
 .poll .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
 .poll button{font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left;border-radius:12px;padding:12px 14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .poll button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
@@ -243,6 +244,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <div class="tip"><b>Scuba course vs Open Water, simply:</b> both give you a certificate. The 3-day course is a supervised licence: you can only dive with a pro and not as deep. Open Water is a full licence: you and a buddy can dive on your own, deeper, anywhere in the world. If we might dive again on future trips, Open Water is worth the extra ₹9,000.</div>
       <div class="poll" data-poll="course">
         <div class="ph"><span class="tag">Vote</span><h3>Which diving course should we do?</h3></div>
+        <p class="hint">Pick all you'd be happy with.</p>
         <div class="opts"><button type="button" data-choice="intro" aria-pressed="false">Intro to Scuba</button><button type="button" data-choice="scuba" aria-pressed="false">Scuba course</button><button type="button" data-choice="openwater" aria-pressed="false">Open Water</button></div>
         <p class="pstatus" role="status"></p>
       </div>
@@ -269,6 +271,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <p class="muted" style="font-size:14px">Port Blair hotel for the last night: still to pick.</p>
       <div class="poll" data-poll="andaman_hotel">
         <div class="ph"><span class="tag">Vote</span><h3>Which Havelock hotel?</h3></div>
+        <p class="hint">Pick all you'd be happy with.</p>
         <div class="opts"><button type="button" data-choice="seashell" aria-pressed="false">Seashell Samsara</button><button type="button" data-choice="silversand" aria-pressed="false">Silver Sand Beach Resort</button></div>
         <p class="pstatus" role="status"></p>
       </div>
@@ -357,6 +360,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <div class="tip"><b>Rooms:</b> 7 of us means rooms of 2, 2 and 3. The three sharing can take a bigger room if they want, since the cost is split three ways for them anyway.</div>
       <div class="poll" data-poll="goa_hotel">
         <div class="ph"><span class="tag">Vote</span><h3>Which Goa hotel?</h3></div>
+        <p class="hint">Pick all you'd be happy with.</p>
         <div class="opts"><button type="button" data-choice="ronil" aria-pressed="false">Ronil, JdV by Hyatt</button><button type="button" data-choice="hardrock" aria-pressed="false">Hard Rock Calangute</button><button type="button" data-choice="hyatt" aria-pressed="false">Hyatt Centric Candolim</button><button type="button" data-choice="fairfield" aria-pressed="false">Fairfield by Marriott</button></div>
         <p class="pstatus" role="status"></p>
       </div>
@@ -404,9 +408,10 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
 
   <div class="block">
     <header style="border-top-color:var(--ink)"><span class="eyebrow">The big one</span><h2>Final vote</h2></header>
-    <p class="muted">Looked at both? Pick where we're going. You can change your vote any time.</p>
+    <p class="muted">Looked at both? Pick where we're going. Fine with either? Pick both. You can change your vote any time.</p>
     <div class="poll final" data-poll="destination">
       <div class="ph"><span class="tag">Vote</span><h3>Andaman or Goa?</h3></div>
+      <p class="hint">Pick both if you're fine either way.</p>
       <div class="opts"><button type="button" data-choice="andaman" aria-pressed="false">Andaman</button><button type="button" data-choice="goa" aria-pressed="false">Goa</button></div>
       <p class="pstatus" role="status"></p>
     </div>
@@ -495,7 +500,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     $("whoName").textContent=n;
     $("gate").hidden=true;$("main").hidden=false;window.scrollTo(0,0);
     $("results").hidden=n!==ADMIN;
-    POLLS.forEach(q=>setPicked(q,null));
+    POLLS.forEach(q=>setPicked(q,[]));
     loadMine();
     if(n===ADMIN){loadResults();timer=setInterval(loadResults,20000)}
   });
@@ -506,7 +511,9 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     $("main").hidden=true;$("gate").hidden=false;window.scrollTo(0,0);
   });
 
-  function setPicked(q,choice){q.el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.choice===choice))}
+  function setPicked(q,choices){q.el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",(choices||[]).includes(b.dataset.choice)))}
+  function picked(q){return [...q.el.querySelectorAll('button[aria-pressed="true"]')].map(b=>b.dataset.choice)}
+  function labels(q,keys){return q.opts.filter(o=>keys.includes(o.key)).map(o=>o.label).join(", ")}
   function pstatus(q,t){q.el.querySelector(".pstatus").textContent=t}
 
   async function loadMine(){
@@ -514,19 +521,20 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     const {data,error}=await sb.rpc("get_my_votes",{p_name:who,p_password:pw});
     if(who!==me)return;
     if(error){POLLS.forEach(q=>pstatus(q,"Couldn't load your votes. Refresh the page."));return}
-    const mine={};(data||[]).forEach(r=>mine[r.poll]=r.choice);
-    POLLS.forEach(q=>{setPicked(q,mine[q.id]||null);pstatus(q,mine[q.id]?"You voted. Tap another option to change it.":"Tap an option to vote.")});
+    const mine={};(data||[]).forEach(r=>(mine[r.poll]=mine[r.poll]||[]).push(r.choice));
+    POLLS.forEach(q=>{const c=mine[q.id]||[];setPicked(q,c);pstatus(q,c.length?"You picked: "+labels(q,c)+". Tap to add or remove.":"Pick as many as you like.")});
   }
 
   POLLS.forEach(q=>q.el.querySelectorAll("button").forEach(b=>b.addEventListener("click",async()=>{
     if(!me)return;
+    const before=picked(q);
+    const next=before.includes(b.dataset.choice)?before.filter(c=>c!==b.dataset.choice):[...before,b.dataset.choice];
     const btns=q.el.querySelectorAll("button");btns.forEach(x=>x.disabled=true);
-    pstatus(q,"Saving…");
-    const {error}=await sb.rpc("cast_vote",{p_name:me,p_poll:q.id,p_choice:b.dataset.choice,p_password:pw});
+    setPicked(q,next);pstatus(q,"Saving…");
+    const {error}=await sb.rpc("set_votes",{p_name:me,p_poll:q.id,p_choices:next,p_password:pw});
     btns.forEach(x=>x.disabled=false);
-    if(error){pstatus(q,"Couldn't save your vote. Try again in a moment.");return}
-    setPicked(q,b.dataset.choice);
-    pstatus(q,"Vote saved: "+b.textContent+". Tap another option to change it.");
+    if(error){setPicked(q,before);pstatus(q,"Couldn't save your vote. Try again in a moment.");return}
+    pstatus(q,next.length?"Saved: "+labels(q,next)+". Tap to add or remove.":"No vote saved. Pick as many as you like.");
     if(me===ADMIN)loadResults();
   })));
 
@@ -539,7 +547,8 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     POLLS.forEach(q=>{
       const rows=(data||[]).filter(r=>r.poll===q.id);
       const wrap=document.createElement("div");wrap.className="rpoll";
-      const h=document.createElement("h3");h.textContent=q.title+" · "+rows.length+" of "+NAMES.length+" voted";wrap.appendChild(h);
+      const voted=new Set(rows.map(r=>r.name));
+      const h=document.createElement("h3");h.textContent=q.title+" · "+voted.size+" of "+NAMES.length+" voted";wrap.appendChild(h);
       q.opts.forEach(o=>{
         const who=rows.filter(r=>r.choice===o.key).map(r=>r.name);
         const bar=document.createElement("div");bar.className="bar";
@@ -553,7 +562,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
         if(who.length){const nm=document.createElement("span");nm.className="names";nm.textContent=who.join(", ");bar.appendChild(nm)}
         wrap.appendChild(bar);
       });
-      const voted=new Set(rows.map(r=>r.name));const left=NAMES.filter(n=>!voted.has(n));
+      const left=NAMES.filter(n=>!voted.has(n));
       if(left.length){const w=document.createElement("p");w.className="waiting";w.textContent="Not voted yet: "+left.join(", ");wrap.appendChild(w)}
       body.appendChild(wrap);
     });
