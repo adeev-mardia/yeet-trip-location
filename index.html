@@ -11,7 +11,7 @@
 :root{
   --bg:#f2f5f6; --surface:#ffffff; --ink:#122126; --muted:#56666c; --line:#d6e0e3;
   --sea:#0f6e78; --sea-soft:#dcefef; --sun:#c8502d; --sun-soft:#fbe6dd;
-  --warn:#8a5a00; --warn-soft:#fdf1d6;
+  --warn:#8a5a00; --warn-soft:#fdf1d6; --on-sea:#ffffff;
   --display:"Syne", "Avenir Next", "Trebuchet MS", system-ui, sans-serif;
   --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --accent:var(--sea); --accent-soft:var(--sea-soft);
@@ -19,11 +19,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0d1719; --surface:#152225; --ink:#e3eef0; --muted:#95a7ac; --line:#26383c;
   --sea:#4fc1c9; --sea-soft:#183a3d; --sun:#f08a63; --sun-soft:#3d2219;
-  --warn:#f2c46b; --warn-soft:#352a12; color-scheme:dark}}
+  --warn:#f2c46b; --warn-soft:#352a12; --on-sea:#06181a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0d1719; --surface:#152225; --ink:#e3eef0; --muted:#95a7ac; --line:#26383c;
   --sea:#4fc1c9; --sea-soft:#183a3d; --sun:#f08a63; --sun-soft:#3d2219;
-  --warn:#f2c46b; --warn-soft:#352a12; color-scheme:dark}
+  --warn:#f2c46b; --warn-soft:#352a12; --on-sea:#06181a; color-scheme:dark}
 body.goa{--accent:var(--sun); --accent-soft:var(--sun-soft)}
 
 *,*::before,*::after{box-sizing:border-box}
@@ -116,18 +116,84 @@ td.hl{font-weight:700}
 .check li{display:grid;grid-template-columns:22px 1fr;gap:8px}
 .check li::before{content:"";width:16px;height:16px;border:2px solid var(--accent);border-radius:4px;margin-top:3px}
 
+
+/* gate */
+.gate{max-width:460px;margin:0 auto;padding-inline:16px;padding-block:56px 48px;display:flex;flex-direction:column;gap:22px}
+.gate .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.gate label{font-size:13px;font-weight:700;color:var(--muted)}
+.gate select,.gate input{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%}
+.btn{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;border:0;padding:12px 18px;background:var(--sea);color:var(--on-sea);align-self:flex-start}
+.btn:disabled{opacity:.5;cursor:default}
+.err{color:var(--sun);font-size:14px;font-weight:600}
+.who{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.linkbtn{font:inherit;font-weight:700;background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gate select:focus-visible,.gate input:focus-visible,.btn:focus-visible,.linkbtn:focus-visible,.poll button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* polls */
+.poll{background:var(--surface);border:2px dashed var(--accent);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.poll .ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.poll .ph .tag{margin:0}
+.poll .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.poll button{font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;text-align:left;border-radius:12px;padding:12px 14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.poll button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.poll button[aria-pressed="true"]::after{content:"✓";color:var(--accent)}
+.poll button:disabled{cursor:progress}
+.pstatus{font-size:13.5px;color:var(--muted);min-height:1.4em}
+.poll.final{border-style:solid;border-color:var(--ink)}
+.poll.final .opts button[data-choice="andaman"][aria-pressed="true"]{border-color:var(--sea);background:var(--sea-soft)}
+.poll.final .opts button[data-choice="goa"][aria-pressed="true"]{border-color:var(--sun);background:var(--sun-soft)}
+.poll.final button[data-choice="andaman"][aria-pressed="true"]::after{color:var(--sea)}
+.poll.final button[data-choice="goa"][aria-pressed="true"]::after{color:var(--sun)}
+
+/* results (admin) */
+.results{background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:18px}
+.results .rh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rpoll{display:flex;flex-direction:column;gap:8px}
+.rpoll h3{font-size:15px}
+.bar{display:grid;grid-template-columns:minmax(0,150px) 1fr 28px;gap:10px;align-items:center;font-size:14px}
+.bar .track{height:10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--sea);border-radius:999px}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.bar .names{grid-column:2/-1;font-size:12.5px;color:var(--muted);margin-top:-4px}
+.waiting{font-size:12.5px;color:var(--muted)}
+
 footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 @media (max-width:480px){.switch button{font-size:16px;padding:12px}}
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<section class="gate" id="gate">
+  <div class="stack" style="gap:8px">
+    <span class="eyebrow">Winter trip · 7 of us</span>
+    <h1><span style="color:var(--sea)">Andaman</span> or <span style="color:var(--sun)">Goa</span>?</h1>
+    <p class="muted">Pick your name to see the options and vote.</p>
+  </div>
+  <div class="card">
+    <label for="nameSelect">Who are you?</label>
+    <select id="nameSelect"><option value="">Choose your name…</option></select>
+    <div id="pwBox" class="stack" style="gap:6px" hidden>
+      <label for="pw">Password</label>
+      <input id="pw" type="password" autocomplete="current-password">
+    </div>
+    <p id="gateErr" class="err" hidden></p>
+    <button id="goBtn" class="btn" disabled>Continue</button>
+  </div>
+</section>
+
+<div class="wrap" id="main" hidden>
   <div class="hero">
     <span class="eyebrow">Winter trip · 7 of us · Dec–Jan</span>
     <h1><span class="a">Andaman</span> or <span class="g">Goa</span>?</h1>
     <p class="lede muted">Everything we know so far about both options, so we can pick one. All prices are per person unless it says otherwise. Exact dates and number of nights aren't fixed yet, so use the estimate at the bottom of each tab to try different lengths.</p>
+    <div class="who"><span>Voting as <b id="whoName"></b>. Only Adeev sees the results.</span><button id="switchBtn" class="linkbtn">Not you?</button></div>
   </div>
+
+  <section class="results" id="results" hidden>
+    <div class="rh"><h2>Poll results</h2><button id="refreshBtn" class="linkbtn">Refresh</button></div>
+    <p class="muted" style="font-size:14px">Only you can see this. Updates every 20 seconds.</p>
+    <div id="resultsBody" class="stack" style="gap:18px"></div>
+  </section>
 
   <div class="switch" role="tablist" aria-label="Destination">
     <button id="tab-andaman" role="tab" aria-selected="true" aria-controls="andaman">Andaman<small>Diving on Havelock</small></button>
@@ -175,6 +241,11 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
         </div>
       </div>
       <div class="tip"><b>Scuba course vs Open Water, simply:</b> both give you a certificate. The 3-day course is a supervised licence: you can only dive with a pro and not as deep. Open Water is a full licence: you and a buddy can dive on your own, deeper, anywhere in the world. If we might dive again on future trips, Open Water is worth the extra ₹9,000.</div>
+      <div class="poll" data-poll="course">
+        <div class="ph"><span class="tag">Vote</span><h3>Which diving course should we do?</h3></div>
+        <div class="opts"><button type="button" data-choice="intro" aria-pressed="false">Intro to Scuba</button><button type="button" data-choice="scuba" aria-pressed="false">Scuba course</button><button type="button" data-choice="openwater" aria-pressed="false">Open Water</button></div>
+        <p class="pstatus" role="status"></p>
+      </div>
     </div>
 
     <div class="block">
@@ -196,6 +267,11 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       </div>
       <div class="tip"><b>Rooms:</b> 7 of us means rooms of 2, 2 and 3. The three sharing can take a bigger room if they want, since the cost is split three ways for them anyway.</div>
       <p class="muted" style="font-size:14px">Port Blair hotel for the last night: still to pick.</p>
+      <div class="poll" data-poll="andaman_hotel">
+        <div class="ph"><span class="tag">Vote</span><h3>Which Havelock hotel?</h3></div>
+        <div class="opts"><button type="button" data-choice="seashell" aria-pressed="false">Seashell Samsara</button><button type="button" data-choice="silversand" aria-pressed="false">Silver Sand Beach Resort</button></div>
+        <p class="pstatus" role="status"></p>
+      </div>
     </div>
 
     <div class="block">
@@ -279,6 +355,11 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
         </article>
       </div>
       <div class="tip"><b>Rooms:</b> 7 of us means rooms of 2, 2 and 3. The three sharing can take a bigger room if they want, since the cost is split three ways for them anyway.</div>
+      <div class="poll" data-poll="goa_hotel">
+        <div class="ph"><span class="tag">Vote</span><h3>Which Goa hotel?</h3></div>
+        <div class="opts"><button type="button" data-choice="ronil" aria-pressed="false">Ronil, JdV by Hyatt</button><button type="button" data-choice="hardrock" aria-pressed="false">Hard Rock Calangute</button><button type="button" data-choice="hyatt" aria-pressed="false">Hyatt Centric Candolim</button><button type="button" data-choice="fairfield" aria-pressed="false">Fairfield by Marriott</button></div>
+        <p class="pstatus" role="status"></p>
+      </div>
     </div>
 
     <div class="block">
@@ -321,9 +402,20 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     </div>
   </section>
 
+  <div class="block">
+    <header style="border-top-color:var(--ink)"><span class="eyebrow">The big one</span><h2>Final vote</h2></header>
+    <p class="muted">Looked at both? Pick where we're going. You can change your vote any time.</p>
+    <div class="poll final" data-poll="destination">
+      <div class="ph"><span class="tag">Vote</span><h3>Andaman or Goa?</h3></div>
+      <div class="opts"><button type="button" data-choice="andaman" aria-pressed="false">Andaman</button><button type="button" data-choice="goa" aria-pressed="false">Goa</button></div>
+      <p class="pstatus" role="status"></p>
+    </div>
+  </div>
+
   <footer>Prices are rough and based on what we've found so far. Flights especially will move with dates.</footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (function(){
   const $=id=>document.getElementById(id);
@@ -374,6 +466,99 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
   }
   ["gNights","gHotel","gRoom","gParties"].forEach(id=>$(id).addEventListener("input",calcG));
   calcG();
+
+  // ---------- names, votes ----------
+  const sb=window.supabase?window.supabase.createClient("https://nigetiedbmnzpvbnkzyq.supabase.co","sb_publishable_MzoFgJlkqvu0MD84ts6NBg_Ic0Kwfwy",{auth:{persistSession:false}}):null;
+  const NAMES=["Aarav","Adeev","Aryan","Darseel","Prithvi","Rajveer","Vivan"], ADMIN="Adeev";
+  const POLLS=[...document.querySelectorAll(".poll")].map(el=>({id:el.dataset.poll,el,title:el.querySelector("h3").textContent,
+    opts:[...el.querySelectorAll("button")].map(b=>({key:b.dataset.choice,label:b.textContent}))}));
+  let me=null, pw=null, timer=null;
+  const sel=$("nameSelect");
+  NAMES.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o)});
+  function gateErr(t){$("gateErr").textContent=t;$("gateErr").hidden=!t}
+  sel.addEventListener("change",()=>{$("pwBox").hidden=sel.value!==ADMIN;$("goBtn").disabled=!sel.value;gateErr("");if(sel.value===ADMIN)$("pw").focus()});
+  $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("goBtn").click()});
+
+  $("goBtn").addEventListener("click",async()=>{
+    const n=sel.value;if(!n)return;
+    if(!sb){gateErr("Couldn't load the voting service. Check your connection and refresh.");return}
+    let p=null;
+    $("goBtn").disabled=true;
+    if(n===ADMIN){
+      p=$("pw").value;
+      const {data,error}=await sb.rpc("check_admin",{p_password:p});
+      if(error){gateErr("Couldn't reach the server. Check your connection and try again.");$("goBtn").disabled=false;return}
+      if(!data){gateErr("That password isn't right. Try again.");$("goBtn").disabled=false;return}
+    }
+    $("pw").value="";$("goBtn").disabled=false;
+    me=n;pw=p;
+    $("whoName").textContent=n;
+    $("gate").hidden=true;$("main").hidden=false;window.scrollTo(0,0);
+    $("results").hidden=n!==ADMIN;
+    POLLS.forEach(q=>setPicked(q,null));
+    loadMine();
+    if(n===ADMIN){loadResults();timer=setInterval(loadResults,20000)}
+  });
+
+  $("switchBtn").addEventListener("click",()=>{
+    if(timer){clearInterval(timer);timer=null}
+    me=null;pw=null;sel.value="";$("pwBox").hidden=true;$("goBtn").disabled=true;
+    $("main").hidden=true;$("gate").hidden=false;window.scrollTo(0,0);
+  });
+
+  function setPicked(q,choice){q.el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.choice===choice))}
+  function pstatus(q,t){q.el.querySelector(".pstatus").textContent=t}
+
+  async function loadMine(){
+    const who=me;
+    const {data,error}=await sb.rpc("get_my_votes",{p_name:who,p_password:pw});
+    if(who!==me)return;
+    if(error){POLLS.forEach(q=>pstatus(q,"Couldn't load your votes. Refresh the page."));return}
+    const mine={};(data||[]).forEach(r=>mine[r.poll]=r.choice);
+    POLLS.forEach(q=>{setPicked(q,mine[q.id]||null);pstatus(q,mine[q.id]?"You voted. Tap another option to change it.":"Tap an option to vote.")});
+  }
+
+  POLLS.forEach(q=>q.el.querySelectorAll("button").forEach(b=>b.addEventListener("click",async()=>{
+    if(!me)return;
+    const btns=q.el.querySelectorAll("button");btns.forEach(x=>x.disabled=true);
+    pstatus(q,"Saving…");
+    const {error}=await sb.rpc("cast_vote",{p_name:me,p_poll:q.id,p_choice:b.dataset.choice,p_password:pw});
+    btns.forEach(x=>x.disabled=false);
+    if(error){pstatus(q,"Couldn't save your vote. Try again in a moment.");return}
+    setPicked(q,b.dataset.choice);
+    pstatus(q,"Vote saved: "+b.textContent+". Tap another option to change it.");
+    if(me===ADMIN)loadResults();
+  })));
+
+  async function loadResults(){
+    if(me!==ADMIN)return;
+    const {data,error}=await sb.rpc("get_vote_results",{p_password:pw});
+    const body=$("resultsBody");
+    if(error){body.textContent="Couldn't load results. Tap Refresh.";return}
+    body.innerHTML="";
+    POLLS.forEach(q=>{
+      const rows=(data||[]).filter(r=>r.poll===q.id);
+      const wrap=document.createElement("div");wrap.className="rpoll";
+      const h=document.createElement("h3");h.textContent=q.title+" · "+rows.length+" of "+NAMES.length+" voted";wrap.appendChild(h);
+      q.opts.forEach(o=>{
+        const who=rows.filter(r=>r.choice===o.key).map(r=>r.name);
+        const bar=document.createElement("div");bar.className="bar";
+        const l=document.createElement("span");l.textContent=o.label;
+        const t=document.createElement("div");t.className="track";const f=document.createElement("div");f.className="fill";
+        f.style.width=(rows.length?who.length/NAMES.length*100:0)+"%";
+        if(q.id==="destination")f.style.background=o.key==="goa"?"var(--sun)":"var(--sea)";
+        t.appendChild(f);
+        const c=document.createElement("span");c.className="n";c.textContent=who.length;
+        bar.append(l,t,c);
+        if(who.length){const nm=document.createElement("span");nm.className="names";nm.textContent=who.join(", ");bar.appendChild(nm)}
+        wrap.appendChild(bar);
+      });
+      const voted=new Set(rows.map(r=>r.name));const left=NAMES.filter(n=>!voted.has(n));
+      if(left.length){const w=document.createElement("p");w.className="waiting";w.textContent="Not voted yet: "+left.join(", ");wrap.appendChild(w)}
+      body.appendChild(wrap);
+    });
+  }
+  $("refreshBtn").addEventListener("click",loadResults);
 })();
 </script>
 
