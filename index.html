@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Andaman or Goa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column; a two-way switch picks the destination, each has the same sections so the two read side by side in the mind */
+:root{
+  --bg:#f2f5f6; --surface:#ffffff; --ink:#122126; --muted:#56666c; --line:#d6e0e3;
+  --sea:#0f6e78; --sea-soft:#dcefef; --sun:#c8502d; --sun-soft:#fbe6dd;
+  --warn:#8a5a00; --warn-soft:#fdf1d6;
+  --display:"Syne", "Avenir Next", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --accent:var(--sea); --accent-soft:var(--sea-soft);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1719; --surface:#152225; --ink:#e3eef0; --muted:#95a7ac; --line:#26383c;
+  --sea:#4fc1c9; --sea-soft:#183a3d; --sun:#f08a63; --sun-soft:#3d2219;
+  --warn:#f2c46b; --warn-soft:#352a12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1719; --surface:#152225; --ink:#e3eef0; --muted:#95a7ac; --line:#26383c;
+  --sea:#4fc1c9; --sea-soft:#183a3d; --sun:#f08a63; --sun-soft:#3d2219;
+  --warn:#f2c46b; --warn-soft:#352a12; color-scheme:dark}
+body.goa{--accent:var(--sun); --accent-soft:var(--sun-soft)}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55}
+[hidden]{display:none!important}
+.wrap{max-width:820px;margin:0 auto;padding-inline:16px;padding-block:32px 64px;display:flex;flex-direction:column;gap:36px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(34px,8vw,58px);font-weight:800;line-height:1}
+h2{font-size:clamp(22px,4.5vw,28px);font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:17px;max-width:62ch}
+.stack{display:flex;flex-direction:column;gap:14px}
+.num{font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:14px}
+.hero h1 .a{color:var(--sea)} .hero h1 .g{color:var(--sun)}
+
+/* switch */
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px}
+.switch button{font:inherit;font-family:var(--display);font-weight:700;font-size:18px;cursor:pointer;border-radius:14px;padding:14px 16px;text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.switch button small{font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted)}
+.switch button[aria-selected="true"]#tab-andaman{border-color:var(--sea);background:var(--sea-soft)}
+.switch button[aria-selected="true"]#tab-goa{border-color:var(--sun);background:var(--sun-soft)}
+.switch button:focus-visible,.calc select:focus-visible,.calc input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+section.dest{display:flex;flex-direction:column;gap:40px}
+.block{display:flex;flex-direction:column;gap:16px}
+.block > header{display:flex;flex-direction:column;gap:4px;border-top:2px solid var(--accent);padding-top:14px}
+
+/* logistics timeline */
+.legs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.legs li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding-bottom:18px;position:relative}
+.legs li::before{content:"";position:absolute;left:13px;top:22px;bottom:0;width:2px;background:var(--line)}
+.legs li:last-child::before{display:none}
+.legs .dot{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);border:2px solid var(--accent);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--accent)}
+.legs b{display:block}
+
+.note{background:var(--warn-soft);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:14.5px;display:flex;gap:10px}
+.note strong{color:var(--warn)}
+.tip{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:14.5px}
+
+/* course cards */
+.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.course{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.course.pick{border:2px solid var(--accent)}
+.course .price{font-family:var(--display);font-size:24px;font-weight:700}
+.course .price small{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.course ul{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);align-self:flex-start}
+
+/* compare table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--bg)}
+td.r,th.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.hl{font-weight:700}
+
+/* hotels */
+.hotels{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.hotel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hotel h3 a{color:inherit;text-decoration-color:var(--line);text-underline-offset:3px}
+.hotel .rate{display:flex;gap:16px;flex-wrap:wrap}
+.hotel .rate div{display:flex;flex-direction:column}
+.hotel .rate span{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.hotel .rate b{font-family:var(--display);font-size:19px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.chip.yes{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.chip.no{border-style:dashed}
+.hotel p{font-size:14px}
+
+/* calculator */
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.calc .inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.calc label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.calc select,.calc input{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 11px;width:100%}
+.lines{display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.lines div{display:flex;justify-content:space-between;gap:12px}
+.lines div span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:2px solid var(--accent);padding-top:12px;flex-wrap:wrap}
+.total b{font-family:var(--display);font-size:clamp(24px,6vw,32px);color:var(--accent);font-variant-numeric:tabular-nums}
+
+.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.check li::before{content:"";width:16px;height:16px;border:2px solid var(--accent);border-radius:4px;margin-top:3px}
+
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:480px){.switch button{font-size:16px;padding:12px}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">Winter trip · 7 of us · Dec–Jan</span>
+    <h1><span class="a">Andaman</span> or <span class="g">Goa</span>?</h1>
+    <p class="lede muted">Everything we know so far about both options, so we can pick one. All prices are per person unless it says otherwise. Exact dates and number of nights aren't fixed yet, so use the estimate at the bottom of each tab to try different lengths.</p>
+  </div>
+
+  <div class="switch" role="tablist" aria-label="Destination">
+    <button id="tab-andaman" role="tab" aria-selected="true" aria-controls="andaman">Andaman<small>Diving on Havelock</small></button>
+    <button id="tab-goa" role="tab" aria-selected="false" aria-controls="goa">Goa<small>Beaches and parties</small></button>
+  </div>
+
+  <!-- ================= ANDAMAN ================= -->
+  <section id="andaman" class="dest" role="tabpanel" aria-labelledby="tab-andaman">
+
+    <div class="block">
+      <header><span class="eyebrow">Getting there</span><h2>How the travel works</h2></header>
+      <p>Flights from Chennai are around <b>₹25,000–30,000 return</b>, depending on dates. That could go up or down closer to booking. We stay on <b>Havelock</b> (Swaraj Dweep), which is a ferry ride from Port Blair. The ferry is about <b>₹4,000 return</b>.</p>
+      <ol class="legs">
+        <li><span class="dot">1</span><div><b>Day 1: Chennai to Port Blair</b><span class="muted">Morning flight, landing around 11am–12pm.</span></div></li>
+        <li><span class="dot">2</span><div><b>Day 1: Straight onto the ferry to Havelock</b><span class="muted">No stop in Port Blair. Check into the Havelock hotel the same day.</span></div></li>
+        <li><span class="dot">3</span><div><b>Days on Havelock</b><span class="muted">Diving course, beaches, activities.</span></div></li>
+        <li><span class="dot">4</span><div><b>Second-last day: afternoon ferry back to Port Blair</b><span class="muted">Check into a Port Blair hotel for one night.</span></div></li>
+        <li><span class="dot">5</span><div><b>Last day: morning flight to Chennai</b></div></li>
+      </ol>
+      <div class="tip"><b>Why the extra night in Port Blair?</b> Flights out of Port Blair leave in the morning, but ferries from Havelock don't get back to Port Blair in time to catch them. So we come back the afternoon before and sleep in Port Blair.</div>
+      <div class="note"><strong>No flying for 24 hours after diving.</strong><span>The last dive has to be at least a full day before the flight home. The Port Blair night helps with this, but plan the course days so the last dive isn't on the final Havelock day.</span></div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Diving</span><h2>Diving with Dive India</h2></header>
+      <p>I'm going with <b>Dive India</b> on Havelock. It's one of the best-known dive centres in the Andamans and is internationally certified with <b>SSI</b> (Scuba Schools International). Diving is not the thing to save money on: a cheap operator can mean worn-out gear and rushed instructors. We're all doing the same course.</p>
+      <div class="courses">
+        <div class="course pick">
+          <span class="tag">Our pick</span>
+          <h3>Intro to Scuba</h3>
+          <div class="price num">₹14,000 <small>/ person · 2 days</small></div>
+          <ul><li>A guided first taste of diving with an instructor</li><li>Shallow dives only</li><li>No certification at the end</li></ul>
+        </div>
+        <div class="course">
+          <span class="tag">Beginner certificate</span>
+          <h3>Scuba course</h3>
+          <div class="price num">₹27,000 <small>/ person · 3 days</small></div>
+          <ul><li>SSI's entry-level certification (Scuba Diver)</li><li>You can dive again later, but only with a dive professional</li><li>Shallower depth limit, typically 12 m</li><li>Can be upgraded to Open Water later</li></ul>
+        </div>
+        <div class="course">
+          <span class="tag">Full certificate</span>
+          <h3>Open Water</h3>
+          <div class="price num">₹36,000 <small>/ person · 4 days</small></div>
+          <ul><li>The full SSI Open Water Diver certification, recognised worldwide</li><li>Dive anywhere with a buddy, no instructor needed</li><li>Certified to 18 m</li><li>Includes gear, study material, at least 4 training dives, snacks on dive days and taxes</li></ul>
+        </div>
+      </div>
+      <div class="tip"><b>Scuba course vs Open Water, simply:</b> both give you a certificate. The 3-day course is a supervised licence: you can only dive with a pro and not as deep. Open Water is a full licence: you and a buddy can dive on your own, deeper, anywhere in the world. If we might dive again on future trips, Open Water is worth the extra ₹9,000.</div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Where to stay</span><h2>Hotels on Havelock</h2></header>
+      <p>On Havelock a hotel is the better choice. There aren't many restaurants for breakfast, and Airbnbs and villas there are mediocre. Both options below include breakfast, have a pool, and are about 4 minutes from the dive centre.</p>
+      <div class="hotels">
+        <article class="hotel">
+          <h3><a href="https://seashellhotels.net/" target="_blank" rel="noopener">Seashell Samsara Havelock</a></h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹9,200–11,000</b></div><div><span>Per person</span><b class="num">₹4,600–5,500</b></div></div>
+          <div class="chips"><span class="chip yes">Breakfast</span><span class="chip yes">Pool</span><span class="chip yes">Gym</span><span class="chip no">Not on the beach</span></div>
+          <p class="muted">Price depends on room type. 4 minutes from the dive site. The cheaper of the two.</p>
+        </article>
+        <article class="hotel">
+          <h3>Silver Sand Beach Resort</h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹15,000+</b></div><div><span>Per person</span><b class="num">₹7,500+</b></div></div>
+          <div class="chips"><span class="chip yes">Breakfast</span><span class="chip yes">Pool</span><span class="chip yes">Spa</span><span class="chip yes">Bar</span><span class="chip yes">On the beach</span></div>
+          <p class="muted">4 minutes from the dive centre and right on the beach. Costs more.</p>
+        </article>
+      </div>
+      <div class="tip"><b>Rooms:</b> 7 of us means rooms of 2, 2 and 3. The three sharing can take a bigger room if they want, since the cost is split three ways for them anyway.</div>
+      <p class="muted" style="font-size:14px">Port Blair hotel for the last night: still to pick.</p>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Other things to do</span><h2>Activities on Havelock</h2></header>
+      <p>These are mostly at Elephant Beach. Prices are approximate, from one operator. Other operators will be in the same ballpark.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Activity</th><th>Type</th><th class="r">Per person</th></tr></thead>
+          <tbody>
+            <tr><td class="hl">Night kayaking (glowing water)</td><td>Paddle out at night to see bioluminescent plankton light up the water. Best on dark nights near a new moon.</td><td class="r">₹3,500</td></tr>
+            <tr><td>Day kayaking</td><td>Calm paddle</td><td class="r">₹3,500</td></tr>
+            <tr><td>Banana boat ride</td><td>Fun, group</td><td class="r">₹1,000</td></tr>
+            <tr><td>Sofa ride</td><td>Fun, group</td><td class="r">₹1,000</td></tr>
+            <tr><td>Jet skiing</td><td>Speed</td><td class="r">₹1,200</td></tr>
+            <tr><td>Parasailing</td><td>Speed, views</td><td class="r">₹3,500</td></tr>
+            <tr><td>Sea kart</td><td>Speed</td><td class="r">₹3,500</td></tr>
+            <tr><td>Snorkeling</td><td>Underwater</td><td class="r">₹3,000</td></tr>
+            <tr><td>Sea walking</td><td>Underwater, helmet walk on the seabed</td><td class="r">₹3,500</td></tr>
+            <tr><td>Glass bottom boat</td><td>Relaxed, see the reef from above</td><td class="r">₹1,500</td></tr>
+            <tr><td>Dolphin glass bottom boat</td><td>Relaxed</td><td class="r">₹3,000</td></tr>
+            <tr><td>Semi-submarine lunch cruise</td><td>Relaxed, with a meal</td><td class="r">₹3,750</td></tr>
+            <tr><td>Semi-submarine dinner cruise</td><td>Relaxed, with a meal</td><td class="r">₹3,750</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Rough cost</span><h2>Estimate per person</h2></header>
+      <div class="calc" id="calcA">
+        <div class="inputs">
+          <label for="aNights">Nights on Havelock<input id="aNights" type="number" min="1" max="15" value="5" inputmode="numeric"></label>
+          <label for="aHotel">Hotel<select id="aHotel"><option value="seashell">Seashell Samsara</option><option value="silver">Silver Sand Beach Resort</option></select></label>
+          <label for="aRoom">Room<select id="aRoom"><option value="2">Sharing with 1 (room of 2)</option><option value="3">Sharing with 2 (room of 3)</option></select></label>
+          <label for="aCourse">Course<select id="aCourse"><option value="14000">Intro to Scuba · ₹14,000</option><option value="27000">Scuba course · ₹27,000</option><option value="36000">Open Water · ₹36,000</option></select></label>
+        </div>
+        <div class="lines" id="aLines"></div>
+        <div class="total"><span class="muted">Per person, roughly</span><b id="aTotal"></b></div>
+        <p class="muted" style="font-size:13.5px">Not included: Port Blair hotel night, lunch and dinner, activities, getting around Havelock. The 3-person room assumes the same room rate; a bigger room would cost more.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= GOA ================= -->
+  <section id="goa" class="dest" role="tabpanel" aria-labelledby="tab-goa" hidden>
+
+    <div class="block">
+      <header><span class="eyebrow">Getting there</span><h2>Flights and getting around</h2></header>
+      <p>Flights from Chennai are around <b>₹18,000–21,000 return</b>, depending on dates.</p>
+      <div class="note"><strong>No Uber or Rapido in Goa.</strong><span>We'll rent 2 cars for 4 days, about ₹35,000–40,000 in total, which is roughly <b class="num">₹5,000–5,700 per person</b>.</span></div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Where to stay</span><h2>Hotels in North Goa</h2></header>
+      <p>All of these have a pool and include breakfast. Rates are per room per night, 2 people per room. Ordered roughly from best location to furthest from the main party area.</p>
+      <div class="hotels">
+        <article class="hotel">
+          <h3>Ronil Goa, JdV by Hyatt</h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹20,000–21,000</b></div><div><span>Per person</span><b class="num">₹10,000–10,500</b></div></div>
+          <div class="chips"><span class="chip yes">Best location</span><span class="chip yes">Breakfast</span><span class="chip yes">Pool</span></div>
+          <p class="muted">In Baga, walking distance to the main party strip.</p>
+        </article>
+        <article class="hotel">
+          <h3>Hard Rock Hotel Calangute</h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹16,000–18,000</b></div><div><span>Per person</span><b class="num">₹8,000–9,000</b></div></div>
+          <div class="chips"><span class="chip yes">2nd best location</span><span class="chip yes">Great pool</span><span class="chip yes">Breakfast</span><span class="chip no">Not on the beach</span></div>
+          <p class="muted">I've stayed here and it's really good. One of the cheaper options, with the second-best location.</p>
+        </article>
+        <article class="hotel">
+          <h3>Hyatt Centric Candolim</h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹20,000–22,000</b></div><div><span>Per person</span><b class="num">₹10,000–11,000</b></div></div>
+          <div class="chips"><span class="chip yes">Breakfast</span><span class="chip yes">Pool</span><span class="chip no">Not on the beach</span><span class="chip no">Further from parties</span></div>
+          <p class="muted">Quieter Candolim. The most expensive, and we'd drive to most parties.</p>
+        </article>
+        <article class="hotel">
+          <h3>Fairfield by Marriott</h3>
+          <div class="rate"><div><span>Per room / night</span><b class="num">₹16,000–18,000</b></div><div><span>Per person</span><b class="num">₹8,000–9,000</b></div></div>
+          <div class="chips"><span class="chip yes">Breakfast</span><span class="chip yes">Pool</span><span class="chip no">Not on the beach</span><span class="chip no">Basic rooms</span></div>
+          <p class="muted">Rooms are fairly basic for the price.</p>
+        </article>
+      </div>
+      <div class="tip"><b>Rooms:</b> 7 of us means rooms of 2, 2 and 3. The three sharing can take a bigger room if they want, since the cost is split three ways for them anyway.</div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Going out</span><h2>Food and parties</h2></header>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>What</th><th>Details</th><th class="r">Per person</th></tr></thead>
+          <tbody>
+            <tr><td class="hl">Parties</td><td>Pretty much every night, with crowds our age. This is the minimum entry.</td><td class="r">₹4,000–5,000 per party</td></tr>
+            <tr><td class="hl">Good restaurants</td><td>Minimum cover charge, even for lunch</td><td class="r">₹1,500–2,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Other things to do</span><h2>Water sports</h2></header>
+      <div class="chips"><span class="chip yes">Parasailing</span><span class="chip yes">Jet skiing</span><span class="chip yes">Flyboarding</span><span class="chip yes">Wakeboarding</span></div>
+      <p class="muted" style="font-size:14px">Prices to be added.</p>
+    </div>
+
+    <div class="block">
+      <header><span class="eyebrow">Rough cost</span><h2>Estimate per person</h2></header>
+      <div class="calc" id="calcG">
+        <div class="inputs">
+          <label for="gNights">Nights<input id="gNights" type="number" min="1" max="15" value="5" inputmode="numeric"></label>
+          <label for="gHotel">Hotel<select id="gHotel">
+            <option value="hardrock">Hard Rock Calangute</option>
+            <option value="ronil">Ronil, JdV by Hyatt</option>
+            <option value="hyatt">Hyatt Centric Candolim</option>
+            <option value="fairfield">Fairfield by Marriott</option>
+          </select></label>
+          <label for="gRoom">Room<select id="gRoom"><option value="2">Sharing with 1 (room of 2)</option><option value="3">Sharing with 2 (room of 3)</option></select></label>
+          <label for="gParties">Party nights<input id="gParties" type="number" min="0" max="15" value="5" inputmode="numeric"></label>
+        </div>
+        <div class="lines" id="gLines"></div>
+        <div class="total"><span class="muted">Per person, roughly</span><b id="gTotal"></b></div>
+        <p class="muted" style="font-size:13.5px">Not included: lunch and dinner, drinks inside parties, water sports. Party entry uses the ₹4,000–5,000 minimum per party. Cars are counted for 4 days.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Prices are rough and based on what we've found so far. Flights especially will move with dates.</footer>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const inr=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+  const range=(lo,hi)=>lo===hi?inr(lo):inr(lo)+"–"+inr(hi).slice(1);
+
+  // tabs
+  const tabs=[["tab-andaman","andaman"],["tab-goa","goa"]];
+  function show(which){
+    tabs.forEach(([t,p])=>{const on=p===which;$(t).setAttribute("aria-selected",on);$(p).hidden=!on});
+    document.body.classList.toggle("goa",which==="goa");
+  }
+  tabs.forEach(([t,p])=>$(t).addEventListener("click",()=>show(p)));
+  if(location.hash==="#goa")show("goa");
+
+  function clampInt(el,min,max){let v=parseInt(el.value,10);if(isNaN(v))v=min;return Math.max(min,Math.min(max,v))}
+  function lines(el,rows){el.innerHTML="";rows.forEach(([k,v])=>{const d=document.createElement("div");const a=document.createElement("span");a.textContent=k;const b=document.createElement("span");b.textContent=v;d.append(a,b);el.appendChild(d)})}
+
+  // Andaman: [lo, hi] per room per night; Silver Sand has only a "from" price
+  const AH={seashell:[9200,11000],silver:[15000,15000]};
+  function calcA(){
+    const n=clampInt($("aNights"),1,15), h=AH[$("aHotel").value], per=+$("aRoom").value, course=+$("aCourse").value;
+    const hl=h[0]*n/per, hh=h[1]*n/per;
+    const lo=25000+4000+course+hl, hi=30000+4000+course+hh;
+    lines($("aLines"),[
+      ["Flights (return)","₹25,000–30,000"],
+      ["Ferry Port Blair ⇄ Havelock","₹4,000"],
+      ["Dive course",inr(course)],
+      ["Hotel, "+n+" night"+(n>1?"s":"")+", room of "+per,range(hl,hh)+($("aHotel").value==="silver"?"+":"")]
+    ]);
+    $("aTotal").textContent=range(lo,hi)+($("aHotel").value==="silver"?"+":"");
+  }
+  ["aNights","aHotel","aRoom","aCourse"].forEach(id=>$(id).addEventListener("input",calcA));
+  calcA();
+
+  const GH={hardrock:[16000,18000],ronil:[20000,21000],hyatt:[20000,22000],fairfield:[16000,18000]};
+  function calcG(){
+    const n=clampInt($("gNights"),1,15), h=GH[$("gHotel").value], per=+$("gRoom").value, p=clampInt($("gParties"),0,15);
+    const hl=h[0]*n/per, hh=h[1]*n/per, carLo=35000/7, carHi=40000/7;
+    const lo=18000+carLo+hl+p*4000, hi=21000+carHi+hh+p*5000;
+    lines($("gLines"),[
+      ["Flights (return)","₹18,000–21,000"],
+      ["Cars (2 cars, 4 days, split 7 ways)",range(carLo,carHi)],
+      ["Hotel, "+n+" night"+(n>1?"s":"")+", room of "+per,range(hl,hh)],
+      ["Party entry, "+p+" night"+(p===1?"":"s"),p?range(p*4000,p*5000):"₹0"]
+    ]);
+    $("gTotal").textContent=range(lo,hi);
+  }
+  ["gNights","gHotel","gRoom","gParties"].forEach(id=>$(id).addEventListener("input",calcG));
+  calcG();
+})();
+</script>
+
+</body>
+</html>
